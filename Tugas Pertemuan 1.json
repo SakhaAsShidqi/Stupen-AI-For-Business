@@ -1,0 +1,115 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Pembuatan Agen AI Chatbot Web dengan Workflow n8n.cloud\n\nBuatlah agen AI dalam bentuk chatbot web mengggunakan workflow n8n pada web n8n.cloud dengan ketentuan berikut ini:\n\n1. Tentukan tugas chatbot AI web Anda ini dibuat untuk menjawab pertanyaan tentang apa.\n\n2. Input chat berupa node trigger on chat message.\n\n3. Node AI Agent memiliki subnote model AI Google Gemini Chat Model. \n\n4. Node AI Agent memiliki chat memory untuk menyimpan 5 percakapan.\n\n5. Node AI Agent diberi prompt system message sesuai dengan tugas chatbot di nomor 1.\n\n6. Tes bertanya ke chatbot agen AI dan lihat jawaban di canvas n8n. \n\n7. Tes bertanya ke chatbot agen AI melalui web. Pastikan tautan web sudah diaktifkan (enable) dan workflow sudah diterbitkan (publish).\n\n8. Tulislah laporan singkat yang isinya berikut ini: \na. Uraian hasil pengerjaan langkah 1 s.d. 7. \nb. Ada bukti berupa screenshot hasil tes di langkah nomor 6 dan 7. \nc. Ada tautan URL web chatbot (hasil copy tautan web chat).\nd. Ada tautan file JSON workflow yang telah di-upload ke Github.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -32,
+        64
+      ],
+      "id": "8f2eab80-b345-4c23-bf36-2eac9870e4a8",
+      "name": "When chat message received",
+      "webhookId": "dca7afbb-edbc-448f-abda-5bec2dfc6bc4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah Asisten Spesialis Digital Marketing.\n\nTugas Anda adalah membantu menjawab pertanyaan pengguna tentang:\n- SEO\n- SEM\n- Email Marketing\n- CLV\n- Marketing Funnel\n- B2B Marketing\n\nAturan:\n1. Jawab dengan bahasa Indonesia yang jelas, ringkas, dan sopan.\n2. Fokus hanya pada topik digital marketing yang disebutkan di atas.\n3. Jika pertanyaan di luar topik, katakan dengan jujur bahwa chatbot ini hanya melayani topik digital marketing.\n4. Gunakan gaya jawaban yang ramah dan mudah dipahami pemula.\n5. Jika ada konteks dari percakapan sebelumnya, gunakan memori percakapan agar jawaban tetap nyambung.\n6. Jangan memberi jawaban terlalu panjang; cukup 1–3 paragraf jika tidak diminta lebih rinci."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        176,
+        64
+      ],
+      "id": "a5f3d045-cb97-44f4-97f0-0e6f1b36a377",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        176,
+        288
+      ],
+      "id": "5a0b8dc7-e07e-4edf-93f0-024f13950ec4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WU1TDXKIA81b2EAy",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        288
+      ],
+      "id": "91df0989-265b-412e-abde-666efa3e1b24",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "99693795-e909-461c-8455-660d34430937",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2793832703a88fe04118bc957b4cf485ab262dee71614b46602b63a82b8a4db6"
+  },
+  "id": "9pCw1AkS8VRts6xc",
+  "tags": []
+}
