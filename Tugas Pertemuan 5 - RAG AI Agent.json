@@ -1,0 +1,188 @@
+{
+  "name": "Tugas Pertemuan 5 - RAG AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hallo saya assistant AI Agent disini, ada yang bisa saya bantu?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -224,
+        16
+      ],
+      "id": "3e686937-7f2d-400e-85ad-704ced93117b",
+      "name": "When chat message received",
+      "webhookId": "33085332-83f3-4c45-b663-ccf34c88265d"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah asisten AI yang membantu pengguna memahami panduan penulisan ilmiah tugas akhir/skripsi.\n\nGunakan tool Supabase Vector Store untuk menjawab pertanyaan berdasarkan dokumen yang tersedia di database.\n\nAturan:\n1. Jawab hanya berdasarkan informasi yang tersedia di database.\n2. Jangan mengarang jawaban.\n3. Jika informasi tidak ditemukan, jawab:\n“Maaf, saya belum dapat menjawab karena informasi tidak ditemukan pada database yang tersedia.”\n4. Jawab dengan ringkas dan jelas."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -80,
+        16
+      ],
+      "id": "706c27fe-86e1-409c-9ccb-b042e0dc5abe",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        224
+      ],
+      "id": "0cf1754d-692c-4fa7-a3b7-51359fd67e62",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WU1TDXKIA81b2EAy",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        224
+      ],
+      "id": "64c3aacc-2aab-43fc-aca2-9f70655551e4",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "Iu4uMNUbY1IgZFfv",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Gunakan tool ini untuk menjawab pertanyaan tentang isi dokumen penulisan ilmiah tugas akhir atau skripsi yang tersimpan di vector database.\nSelalu gunakan tool ini sebelum menjawab pertanyaan pengguna.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents_skripsi",
+          "mode": "list",
+          "cachedResultName": "documents_skripsi"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        80
+      ],
+      "id": "d4cb845c-1e44-414c-b29b-da22c6640591",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "bxqi3etTGcnadGrM",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        224,
+        256
+      ],
+      "id": "0b59b328-7dd7-464c-b744-3d025ac34bd5",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WU1TDXKIA81b2EAy",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ff82bc14-1f9c-4cc7-8d10-069e398783fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2793832703a88fe04118bc957b4cf485ab262dee71614b46602b63a82b8a4db6"
+  },
+  "id": "ARDDZkAgeZzBN43b",
+  "tags": []
+}
